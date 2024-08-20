@@ -25,7 +25,10 @@ class MessageRepository extends ServiceEntityRepository
     public function by(Request $request): array
     {
         $status = $request->query->get('status');
-        
+        /**
+         * We need to use the ORM logic, by mapping columns to abstractions, and basing our bondings to prepared statements
+         * Using $this->findBy alongside a Criteria object is much more adequate
+         */
         if ($status) {
             $messages = $this->getEntityManager()
                 ->createQuery(

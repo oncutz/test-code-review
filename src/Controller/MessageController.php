@@ -15,8 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * @see MessageControllerTest
- * TODO: review both methods and also the `openapi.yaml` specification
- *       Add Comments for your Code-Review, so that the developer can understand why changes are needed.
  */
 class MessageController extends AbstractController
 {
@@ -26,9 +24,15 @@ class MessageController extends AbstractController
     #[Route('/messages')]
     public function list(Request $request, MessageRepository $messages): Response
     {
-        $messages = $messages->by($request);
-  
-        foreach ($messages as $key=>$message) {
+        /**
+         * The logic of interacting with the repository should sit inside a ServiceClass, not in the Controller action
+         * This way we would have a much cleaner code and distribute the responsibilities based on SOLID principles
+         * Here we should have a single line
+         * return JsonResponse($service->handleRequest($request), headers: ['Content-Type' => 'application/json']);
+         */
+        $messages = $messages->by($request); // Not a good way of fetching records from DB. SQL injection's paradise
+
+        foreach ($messages as $key => $message) { // PSR12 tells us to keep a space left and right for the =>
             $messages[$key] = [
                 'uuid' => $message->getUuid(),
                 'text' => $message->getText(),
@@ -36,7 +40,7 @@ class MessageController extends AbstractController
             ];
         }
         
-        return new Response(json_encode([
+        return new Response(json_encode([ // It is better and nicer to use JsonResponse method
             'messages' => $messages,
         ], JSON_THROW_ON_ERROR), headers: ['Content-Type' => 'application/json']);
     }
