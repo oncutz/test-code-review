@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Message\SendMessage;
-use App\Repository\MessageRepository;
+use App\Service\MessageService;
 use Controller\MessageControllerTest;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -15,30 +15,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * @see MessageControllerTest
- * TODO: review both methods and also the `openapi.yaml` specification
- *       Add Comments for your Code-Review, so that the developer can understand why changes are needed.
  */
 class MessageController extends AbstractController
 {
-    /**
-     * TODO: cover this method with tests, and refactor the code (including other files that need to be refactored)
-     */
     #[Route('/messages')]
-    public function list(Request $request, MessageRepository $messages): Response
+    public function list(Request $request, MessageService $messageService): Response
     {
-        $messages = $messages->by($request);
-  
-        foreach ($messages as $key=>$message) {
-            $messages[$key] = [
-                'uuid' => $message->getUuid(),
-                'text' => $message->getText(),
-                'status' => $message->getStatus(),
-            ];
-        }
+        $data = $messageService->getMessages($request);
         
-        return new Response(json_encode([
-            'messages' => $messages,
-        ], JSON_THROW_ON_ERROR), headers: ['Content-Type' => 'application/json']);
+        return new JsonResponse($data);
     }
 
     #[Route('/messages/send', methods: ['GET'])]
@@ -46,7 +31,7 @@ class MessageController extends AbstractController
     {
         $text = $request->query->get('text');
         
-        if (!$text) {
+        if (!$text || !is_string($text)) {
             return new Response('Text is required', 400);
         }
 

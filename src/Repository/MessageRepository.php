@@ -21,19 +21,19 @@ class MessageRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Message::class);
     }
-    
+
+    /**
+     * @param Request $request
+     * @return Message[]
+     */
     public function by(Request $request): array
     {
         $status = $request->query->get('status');
-        
+
         if ($status) {
-            $messages = $this->getEntityManager()
-                ->createQuery(
-                    sprintf("SELECT m FROM App\Entity\Message m WHERE m.status = '%s'", $status)
-                )
-                ->getResult();
+            $messages = $this->findBy(['status' => $status]);
         } else {
-            $messages = $this->findAll();
+            $messages = $this->findBy([]);
         }
         
         return $messages;

@@ -1,5 +1,7 @@
 <?php
 
+// Should have the declare(strict_types = 1);
+
 namespace App\Entity;
 
 use App\Repository\MessageRepository;
@@ -8,9 +10,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
-/**
- * TODO: Review Message class
- */
 class Message
 {
     #[ORM\Id]
@@ -30,33 +29,33 @@ class Message
     #[ORM\Column(type: 'datetime')]
     private DateTime $createdAt;
 
-    public function getId(): ?int
+    public function getId(): ?int // We can drop the nullable option as column ID is populated with a generated value
     {
         return $this->id;
     }
 
-    public function getUuid(): ?string
+    public function getUuid(): ?string // We can drop the null option as the column does not have in its declaration the option nullable: true
     {
         return $this->uuid;
     }
 
-    public function setUuid(string $uuid): static
+    public function setUuid(string $uuid): static // A setter should have void as return type to limit the memory used by PHP
     {
         $this->uuid = $uuid;
 
-        return $this;
+        return $this; // we  can drop the return statement
     }
 
-    public function getText(): ?string
+    public function getText(): ?string // We can drop the null option as the column does not have in its declaration the option nullable: true
     {
         return $this->text;
     }
 
-    public function setText(string $text): static
+    public function setText(string $text): static // A setter should have void as return type to limit the memory used by PHP
     {
         $this->text = $text;
 
-        return $this;
+        return $this; // we  can drop the return statement
     }
 
     public function getStatus(): ?string
@@ -64,11 +63,11 @@ class Message
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(string $status): static // A setter should have void as return type to limit the memory used by PHP
     {
         $this->status = $status;
 
-        return $this;
+        return $this; // we  can drop the return statement
     }
 
     public function getCreatedAt(): DateTime
@@ -76,10 +75,10 @@ class Message
         return $this->createdAt;
     }
 
-    public function setCreatedAt(DateTime $createdAt): static
+    public function setCreatedAt(DateTime $createdAt): static // A setter should have void as return type to limit the memory used by PHP
     {
         $this->createdAt = $createdAt;
         
-        return $this;
+        return $this; // we  can drop the return statement
     }
 }
