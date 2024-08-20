@@ -10,10 +10,16 @@ use Zenstruck\Messenger\Test\InteractsWithMessenger;
 class MessageControllerTest extends WebTestCase
 {
     use InteractsWithMessenger;
-    
+
+    /**
+     * Test
+     * @return void
+     */
     function test_list(): void
     {
-        $this->markTestIncomplete('the Controller-Action needs tests');
+        $client = static::createClient();
+        $client->request('GET', '/messages');
+        $this->assertResponseIsSuccessful();
     }
     
     function test_that_it_sends_a_message(): void
@@ -25,7 +31,7 @@ class MessageControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         // This is using https://packagist.org/packages/zenstruck/messenger-test
-        $this->transport('sync')
+        $this->transport('async')
             ->queue()
             ->assertContains(SendMessage::class, 1);
     }

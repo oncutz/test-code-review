@@ -21,22 +21,19 @@ class MessageRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Message::class);
     }
-    
+
+    /**
+     * @param Request $request
+     * @return Message[]
+     */
     public function by(Request $request): array
     {
         $status = $request->query->get('status');
-        /**
-         * We need to use the ORM logic, by mapping columns to abstractions, and basing our bondings to prepared statements
-         * Using $this->findBy alongside a Criteria object is much more adequate
-         */
+
         if ($status) {
-            $messages = $this->getEntityManager()
-                ->createQuery(
-                    sprintf("SELECT m FROM App\Entity\Message m WHERE m.status = '%s'", $status)
-                )
-                ->getResult();
+            $messages = $this->findBy(['status' => $status]);
         } else {
-            $messages = $this->findAll();
+            $messages = $this->findBy([]);
         }
         
         return $messages;
